@@ -1,5 +1,17 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+const isTokenExpired = (token) => {
+  const payload = JSON.parse(atob(token.split(".")[1]));
+
+  if (!payload) {
+    return true;
+  } else {
+    const currentTime = Date.now / 1000;
+
+    return payload.exp < currentTime;
+  }
+};
+
 const UserContext = createContext();
 
 export const UserContextProvider = (props) => {
@@ -16,19 +28,6 @@ export const UserContextProvider = (props) => {
       }
 
       const { token } = user;
-
-      const isTokenExpired = (token) => {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        console.log("Payload", payload);
-
-        if (!payload) {
-          return true;
-        } else {
-          const currentTime = Date.now / 1000;
-
-          return payload.exp < currentTime;
-        }
-      };
 
       if (token && !isTokenExpired(token)) {
         setCurrentUser(user);
